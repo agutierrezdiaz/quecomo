@@ -1,10 +1,14 @@
 package io.github.agutierrezdiaz.quecomo.models.entity;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
@@ -20,6 +24,9 @@ public class Dish extends DefaultEntity implements Serializable {
     @NotEmpty
     private String name;
     private String picture;
+
+    @OneToMany(mappedBy = "dish", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Variant> variants;
 
     public Dish() {
     }

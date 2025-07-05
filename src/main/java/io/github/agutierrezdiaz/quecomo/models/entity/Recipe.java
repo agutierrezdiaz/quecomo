@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
@@ -16,8 +18,15 @@ public class Recipe extends DefaultEntity implements Serializable {
 
     @Id
     private UUID id;
+
+    @ManyToOne
+    @JoinColumn(name = "variant_id", nullable = false)
     private Variant variant;
+
+    @ManyToOne
+    @JoinColumn(name = "ingredient_id", nullable = false)
     private Ingredient ingredient;
+
     private String quantity;
     private boolean required;
 
