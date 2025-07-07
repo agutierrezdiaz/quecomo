@@ -73,6 +73,23 @@ public class Ingredient extends DefaultEntity implements Serializable {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Ingredient other = (Ingredient) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "Ingredient [id=" + id + ", name=" + name + ", type=" + type + ", picture=" + picture + "]";
     }
