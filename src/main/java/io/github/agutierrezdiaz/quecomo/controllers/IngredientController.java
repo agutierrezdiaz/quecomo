@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.github.agutierrezdiaz.quecomo.models.entity.Ingredient;
-import io.github.agutierrezdiaz.quecomo.models.entity.IngredientType;
+import io.github.agutierrezdiaz.quecomo.models.dto.IngredientDTO;
 import io.github.agutierrezdiaz.quecomo.services.IngredientService;
 import jakarta.validation.Valid;
 
@@ -27,19 +24,17 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/v1/ingredients")
 public class IngredientController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(IngredientController.class);
-
     @Autowired
     private IngredientService ingredientService;
 
     @GetMapping
-    public ResponseEntity<List<Ingredient>> getIngredientsList() {
+    public ResponseEntity<List<IngredientDTO>> getIngredientsList() {
         return ResponseEntity.status(HttpStatus.OK).body(this.ingredientService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Ingredient> getIngredientByUuid(@PathVariable(value = "id") UUID id) {
-        Optional<Ingredient> ingredientOptional = this.ingredientService.findById(id);
+    public ResponseEntity<IngredientDTO> getIngredientByUuid(@PathVariable(value = "id") UUID id) {
+        Optional<IngredientDTO> ingredientOptional = this.ingredientService.findById(id);
         if (ingredientOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(ingredientOptional.get());
         }
@@ -47,17 +42,14 @@ public class IngredientController {
     }
 
     @PostMapping
-    public ResponseEntity<Ingredient> createIngredient(@Valid @RequestBody Ingredient ingredient) {
-        if (ingredient.getType() == null) {
-            ingredient.setType(IngredientType.GRAINS);
-        }
+    public ResponseEntity<IngredientDTO> createIngredient(@Valid @RequestBody IngredientDTO ingredient) {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.ingredientService.save(ingredient));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Ingredient> updateIngredient(@PathVariable(value = "id") UUID id,
-            @Valid @RequestBody Ingredient ingredient) {
-        Optional<Ingredient> ingredientOptional = this.ingredientService.update(id, ingredient);
+    public ResponseEntity<IngredientDTO> updateIngredient(@PathVariable(value = "id") UUID id,
+            @Valid @RequestBody IngredientDTO ingredient) {
+        Optional<IngredientDTO> ingredientOptional = this.ingredientService.update(id, ingredient);
         if (ingredientOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(ingredientOptional.orElseThrow());
         }
@@ -66,7 +58,7 @@ public class IngredientController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity deleteIngredient(@PathVariable(value = "id") UUID id) {
-        Optional<Ingredient> ingredientOptional = this.ingredientService.findById(id);
+        Optional<IngredientDTO> ingredientOptional = this.ingredientService.findById(id);
         if (ingredientOptional.isPresent()) {
             this.ingredientService.delete(ingredientOptional.get());
             return ResponseEntity.status(HttpStatus.OK).build();

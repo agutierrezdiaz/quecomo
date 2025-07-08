@@ -3,6 +3,7 @@ package io.github.agutierrezdiaz.quecomo.models.entity;
 import java.io.Serializable;
 import java.util.UUID;
 
+import io.github.agutierrezdiaz.quecomo.models.dto.IngredientDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
@@ -70,6 +71,15 @@ public class Ingredient extends DefaultEntity implements Serializable {
         if (this.id == null) {
             this.id = generateId();
         }
+    }
+
+    public IngredientDTO convertToDto() {
+        IngredientDTO dto = new IngredientDTO();
+        dto.setId(this.getId());
+        dto.setName(this.getName());
+        dto.setType(this.getType().getValue());
+        dto.setPicture(this.getPicture());
+        return dto;
     }
 
     @Override

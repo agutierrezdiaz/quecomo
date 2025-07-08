@@ -3,10 +3,12 @@ package io.github.agutierrezdiaz.quecomo.services;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import io.github.agutierrezdiaz.quecomo.models.dto.IngredientDTO;
 import io.github.agutierrezdiaz.quecomo.models.entity.Ingredient;
 import io.github.agutierrezdiaz.quecomo.repositories.IngredientsRepository;
 
@@ -16,26 +18,27 @@ public class IngredientService {
     @Autowired
     private IngredientsRepository repository;
 
-    public Optional<Ingredient> findById(UUID id) {
-        return this.repository.findById(id);
+    public Optional<IngredientDTO> findById(UUID id) {
+        return Optional.of(this.repository.findById(id).orElseThrow().convertToDto());
     }
 
-    public List<Ingredient> findAll() {
-        return this.repository.findAll();
+    public List<IngredientDTO> findAll() {
+        return this.repository.findAll().stream().map(Ingredient::convertToDto).collect(Collectors.toList());
     }
 
-    public Ingredient save(Ingredient ingredient) {
-        return this.repository.save(ingredient);
+    public IngredientDTO save(IngredientDTO ingredientDto) {
+        return this.repository.save(ingredientDto.toEntity()).convertToDto();
     }
 
-    public Optional<Ingredient> update(UUID id, Ingredient ingredient) {
-        Optional<Ingredient> ingredientOptional = this.repository.findById(id);
+    public Optional<IngredientDTO> update(UUID id, IngredientDTO ingredientDto) {
+        Optional<IngredientDTO> ingredientOptional = Optional
+                .of(this.repository.findById(id).orElseThrow().convertToDto());
         if (ingredientOptional.isPresent()) {
-            Ingredient ingredientDb = ingredientOptional.orElseThrow();
-            ingredientDb.setName(ingredient.getName());
-            ingredientDb.setPicture(ingredient.getPicture());
-            ingredientDb.setType(ingredient.getType());
-            return Optional.of(this.repository.save(ingredientDb));
+            IngredientDTO ingredientDb = ingredientOptional.get();
+            ingredientDb.setName(ingredientDto.getName());
+            ingredientDb.setPicture(ingredientDto.getPicture());
+            ingredientDb.setType(ingredientDto.getType());
+            return Optional.of(this.repository.save(ingredientDb.toEntity()).convertToDto());
         }
         return ingredientOptional;
     }
@@ -47,8 +50,8 @@ public class IngredientService {
         }
     }
 
-    public void delete(Ingredient ingredient) {
-        this.repository.delete(ingredient);
+    public void delete(IngredientDTO ingredientDto) {
+        this.repository.delete(ingredientDto.toEntity());
     }
 
 }
